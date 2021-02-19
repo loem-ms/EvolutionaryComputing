@@ -10,10 +10,10 @@ class Flower(object):
         self.visitNum = 0
         self.evaluate()
     
-    def change(self, basePos):
-        self.position = self.flowerSet.flower[basePos].position
+    def change(self, base):
+        self.position = self.flowerSet.flower[base].position.copy()
         k = random.randint(0,self.flowerSet.data.numX-1)
-        l = (basePos + (random.randint(1,EBEE_NUM-1))) % EBEE_NUM
+        l = (base + (random.randint(1,EBEE_NUM-1))) % EBEE_NUM
         self.position[k] = self.position[k] + np.random.uniform(-1,1)*(self.position[k]-self.flowerSet.flower[l].position[k])
         self.visitNum = 0
         self.evaluate()
@@ -24,4 +24,4 @@ class Flower(object):
         self.evaluate()
     
     def evaluate(self):
-        self.value = np.sum(pow(self.flowerSet.data.Ynorm - self.position @ self.flowerSet.data.Xnorm.T, 2))
+        self.value = np.sum((self.flowerSet.data.Ynorm - self.position @ self.flowerSet.data.Xnorm.T)**2)

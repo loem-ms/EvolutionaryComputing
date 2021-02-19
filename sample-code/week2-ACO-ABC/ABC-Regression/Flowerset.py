@@ -8,10 +8,14 @@ class Flowerset(object):
         self.data = Dataset(filename)
         self.flower = [Flower(self) for _ in range(EBEE_NUM)]
         bestIndex = np.argmax(np.array([self.flower[i].value for i in range(EBEE_NUM)]))
-        self.bestPos = self.flower[bestIndex].position
+        self.bestPos = self.flower[bestIndex].position.copy()
         self.bestValue = self.flower[bestIndex].value
         self._newFlower = Flower(self)
         self._trValue = np.array([0. for _ in range(EBEE_NUM)])
+    
+    def printReport(self):
+        print("report:")
+        print("bestValue:", self.bestValue, "bestPos:", self.bestPos )
     
     def employedBeePhase(self):
         for i in range(EBEE_NUM):
@@ -24,13 +28,12 @@ class Flowerset(object):
     
     def onlookerBeePhase(self):
         for j in range(OBEE_NUM):
-            max_value = np.max(np.array([f.value for f in self.flower]))
-            min_value = np.min(np.array([f.value for f in self.flower]))
-            self._trValue = (max_value - np.array([f.value for f in self.flower]))/(max_value - min_value+1e-9)
+            self._trValue = [self.flower[i].value for i in range(EBEE_NUM)]
+            self._trValue = np.exp(self._trValue)/np.sum(np.exp(self._trValue))
 
             r = np.random.uniform(0,1)
             for i in range(EBEE_NUM-1):
-                prob = self._trValue[i]/(np.sum(self._trValue)+1e-9)
+                prob = self._trValue[i]
                 if r <= prob:
                     break
                 r -= prob
@@ -54,7 +57,7 @@ class Flowerset(object):
                 best = i        
         
         if best != -1:
-            self.bestPos = self.flower[best].position
+            self.bestPos = self.flower[best].position.copy()
             self.bestValue = self.flower[best].value
     
     def printResult(self):

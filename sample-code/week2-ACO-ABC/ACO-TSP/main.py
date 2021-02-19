@@ -3,7 +3,7 @@ from Colony import *
 
 def main():
     colony = Colony('input.txt')
-    for i in range(config.REPEAT_NUM):
+    for i in range(config.ITERATION_NUM):
         colony.selectRoute()
         colony.renewPheromone()
 
